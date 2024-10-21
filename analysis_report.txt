@@ -1,0 +1,57 @@
+Аналіз часу виконання:
+class BloomFilter:
+    """
+    m: "slots"("bits") array length
+    n: number of elements
+    p: false-positive probability
+    l: hash function
+    """
+
+    def __init__(self, n, p):  --> O(1)
+        self.m = -int(n * math.log(p) / (math.log(2) ** 2))  --> 1
+        self.l = int(self.m / n * math.log(2))  --> 1
+
+        self.slots_array = [0] * self.m  --> 1
+
+        self.n = n  --> 1
+        self.p = p  --> 1
+
+    def add(self, item):  --> O(1)
+        for i in range(self.l):  --> l
+            digest = mmh3.hash(item, i) % self.m  --> 1
+            if not self.slots_array[digest]:  --> 1
+                self.slots_array[digest] += 1  --> 1
+
+    def check(self, item):  --> O(N)
+        for i in range(self.l):  --> l
+            digest = mmh3.hash(item, i) % self.m  --> O(N)
+            if not self.slots_array[digest]:  --> 1
+                return False
+        return True
+
+    def remove(self, item):  --> O(N)
+        for i in range(self.l):  --> l
+            digest = mmh3.hash(item, i) % self.m  --> O(N)
+            if self.slots_array[digest]:  --> 1
+                self.slots_array[digest] -= 1  --> 1
+
+
+def process_operations_bloom(operations, n, p):  --> O(N)
+    start_time = time.perf_counter()  --> 1
+
+    bloom_filter = BloomFilter(n, p)  --> O(1)
+
+    for i in range(bloom_filter.n):  --> n
+        operation = operations[i]  --> 1
+        op, string = operation[0], operation[1:].strip()  --> 1, 1
+        if op == '+':
+            bloom_filter.add(string)  --> O(N)
+        elif op == '-':
+            bloom_filter.remove(string)  --> O(N)
+        elif op == '?':
+            check_result = bloom_filter.check(string)  --> O(N)
+            print("Y" if check_result else "N")  --> 1
+        elif op == '#':
+            break
+    end_time = time.perf_counter()  --> 1
+    print("Computation time: ", end_time - start_time)  --> 1
