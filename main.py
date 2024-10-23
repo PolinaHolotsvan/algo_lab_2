@@ -71,16 +71,16 @@ def test_standard(n, p):
 
 def test_10_to_6_length(n, p):
     print("Testing case: input length = 10^6 elements")
-    process_operations_bloom(example1, n, p)
+    process_operations_bloom(example2, n, p)
 
 
 def test_excess_length(n, p):
     print("Testing case: input length > 10^6 elements")
-    process_operations_bloom(example1, n, p)
+    process_operations_bloom(example3, n, p)
 
 
 if __name__ == "__main__":
     n = 10 ** 6
     p = 0.01
 
-    test_excess_length(n, p)
+    test_standard(n, p)

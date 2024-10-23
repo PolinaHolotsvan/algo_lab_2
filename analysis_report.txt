@@ -16,9 +16,9 @@ class BloomFilter:
         self.n = n  --> 1
         self.p = p  --> 1
 
-    def add(self, item):  --> O(1)
+    def add(self, item):  --> O(N)
         for i in range(self.l):  --> l
-            digest = mmh3.hash(item, i) % self.m  --> 1
+            digest = mmh3.hash(item, i) % self.m  --> O(N)
             if not self.slots_array[digest]:  --> 1
                 self.slots_array[digest] += 1  --> 1
 
