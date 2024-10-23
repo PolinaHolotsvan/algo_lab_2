@@ -25,22 +25,65 @@ class BloomFilter:
 
     def add(self, item):
         for i in range(self.l):
-            digest = mmh3.hash(item, i) % self.m
+            digest = universal_hash(item, i, self.n, self.m) % self.m
             if not self.slots_array[digest]:
                 self.slots_array[digest] += 1
 
     def check(self, item):
         for i in range(self.l):
-            digest = mmh3.hash(item, i) % self.m
+            digest = universal_hash(item, i, self.n, self.m) % self.m
             if not self.slots_array[digest]:
                 return False
         return True
 
     def remove(self, item):
         for i in range(self.l):
-            digest = mmh3.hash(item, i) % self.m
+            digest = universal_hash(item, i, self.n, self.m) % self.m
             if self.slots_array[digest]:
                 self.slots_array[digest] -= 1
+
+
+def check_if_prime(num):
+    flag = False
+
+    if num == 0 or num == 1:
+        return False
+    elif num > 1:
+        for i in range(2, num):
+            if (num % i) == 0:
+                flag = True
+                break
+
+        if flag:
+            return False
+        else:
+            return True
+
+
+def find_params(seed):
+    a_seed, b_seed = seed // 2 + 1, seed // 2 + 2
+    a = b = 0
+    a_count = 0
+    while a_count < a_seed:
+        a += 1
+        if check_if_prime(a):
+            a_count += 1
+
+    b_count = 0
+    while b_count < b_seed:
+        b += 1
+        if check_if_prime(b):
+            b_count += 1
+
+    return a, b
+
+
+def universal_hash(s: str, seed, p, m):
+    hash_value = 0
+    a, b = find_params(seed)
+    for k in s:
+        hash_value += ((a * ord(k) + b) % p) % m
+    return hash_value
 
 
 def process_operations_bloom(operations, n, p):
@@ -83,4 +126,4 @@ if __name__ == "__main__":
     n = 10 ** 6
     p = 0.01
 
-    test_standard(n, p)
+    test_10_to_6_length(n, p)

@@ -18,23 +18,65 @@ class BloomFilter:
 
     def add(self, item):  --> O(N)
         for i in range(self.l):  --> l
-            digest = mmh3.hash(item, i) % self.m  --> O(N)
+            digest = universal_hash(item, i, self.n, self.m) % self.m  --> O(N)
             if not self.slots_array[digest]:  --> 1
                 self.slots_array[digest] += 1  --> 1
 
     def check(self, item):  --> O(N)
         for i in range(self.l):  --> l
-            digest = mmh3.hash(item, i) % self.m  --> O(N)
+            digest = universal_hash(item, i, self.n, self.m) % self.m  --> O(N)
             if not self.slots_array[digest]:  --> 1
                 return False
         return True
 
     def remove(self, item):  --> O(N)
         for i in range(self.l):  --> l
-            digest = mmh3.hash(item, i) % self.m  --> O(N)
+            digest = universal_hash(item, i, self.n, self.m) % self.m  --> O(N)
             if self.slots_array[digest]:  --> 1
                 self.slots_array[digest] -= 1  --> 1
 
+
+def check_if_prime(num):  --> O(1)
+    flag = False  --> O(1)
+
+    if num == 0 or num == 1:
+        return False  --> O(1)
+    elif num > 1:
+        for i in range(2, num):   num-2
+            if (num % i) == 0:
+                flag = True  --> O(1)
+                break
+
+        if flag:
+            return False
+        else:
+            return True
+
+
+def find_params(seed):  --> O(1)
+    a_seed, b_seed = seed // 2 + 1, seed // 2 + 2  --> O(1)
+    a = b = 0  --> O(1)
+    a_count = 0  --> O(1)
+    while a_count < a_seed: l
+        a += 1  --> O(1)
+        if check_if_prime(a):
+            a_count += 1  --> O(1)
+
+    b_count = 0
+    while b_count < b_seed:
+        b += 1  --> O(1)
+        if check_if_prime(b):
+            b_count += 1  --> O(1)
+
+    return a, b
+
+
+def universal_hash(s: str, seed, p, m):  --> O(N)
+    hash_value = 0  --> O(1)
+    a, b = find_params(seed)  --> O(1)
+    for k in s: N
+        hash_value += ((a * ord(k) + b) % p) % m  --> O(1)
+    return hash_value
 
 def process_operations_bloom(operations, n, p):  --> O(N)
     start_time = time.perf_counter()  --> 1
